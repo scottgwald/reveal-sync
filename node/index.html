@@ -1,0 +1,21 @@
+<html>
+<head>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io.connect('localhost');
+  socket.on('updateSharedVariable', function (data) {
+    console.log("Got updateSharedVariable with value "+data);
+    $('.sharedVariable').html(data);
+  });
+</script>
+
+</head>
+<body>
+  <h1>View</h1>
+  <p>The shared variable is currently <span class="sharedVariable">not initialized in the view</span>.
+  </p>
+  The dashboard controls this view.
+</body>
+</html>

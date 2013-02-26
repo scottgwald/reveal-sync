@@ -1,0 +1,68 @@
+<html>
+<head>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="//localhost/socket.io/socket.io.js"></script>
+<script>
+  var remoteServer = 'localhost';
+  //var socket = io.connect(remoteServer, {client: 'dashboard'});
+  // error not very verbose. Maybe it doesn't like the unknown option??
+  var socket = io.connect(remoteServer, {port:80,'sync disconnect on unload':true});
+  // var socket = io.connect('/');
+  
+  socket.on('connect', function () {
+    socket.emit('clientEvent',{clientType:'dashboard'});
+  });
+
+  socket.on('next slide', function (data) {
+  	console.log("Got 'next slide'");
+  	$('.latestCommand').html("next slide");
+  });
+
+  socket.on('previous slide', function (data) {
+    console.log("Got 'previous slide'");
+    $('.latestCommand').html("previous slide");
+  });
+
+  function upArrow() {
+    console.log("Calling upArrow33.");
+    socket.emit('upArrow');
+  } 
+
+  function downArrow() {
+    console.log("Calling downArrow33.");
+    socket.emit('downArrow');
+  }
+
+  function otherKey(keyCode) {
+    console.log("Calling otherKey "+keyCode);
+    socket.emit('keypress',{keycode:keyCode});
+  }
+
+  $(document).ready(function() {
+    $(document).keydown(function(event) {
+      console.log("Keydown event, oh yeah!!");
+      if (event.which == 38) {
+        upArrow();
+      } else if (event.which == 40) {
+        downArrow();
+      } else {
+        otherKey(event.which);
+      }
+    });
+  });
+  
+</script>
+
+
+</head>
+<body>
+  <h1>Dashboard</h1>
+  <p>Sent command: <span class="latestCommand">(none so far)</span>.
+  </p>
+  Press the up/down arrows to send commands.
+
+  <script>
+  </script>
+</body>
+</html>

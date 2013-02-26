@@ -1,0 +1,155 @@
+/*********************************************
+ * SOCKET INFO: (from reveal.css)
+ *********************************************/
+.reveal .socket-info {
+  display: none;
+  position: fixed;
+  width: 110px;
+  height: 110px;
+  top: 10px;
+  right: 10px;
+}
+
+.reveal .socket-info div {
+  position: absolute;
+  opacity: 0.5;
+  width: 0px;
+  height: 0px;
+  border: 15px solid;
+  border-radius: 15px;
+  border-color: #e95cd7;
+  /* there is probably a better way of centering */
+  top: 40px;
+  right: 40px;
+  -webkit-transition: opacity 0.2s ease;
+  -moz-transition: opacity 0.2s ease;
+  -ms-transition: opacity 0.2s ease;
+  -o-transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease;
+}
+
+.reveal .socket-info div.enabled {
+  border-color: #05f990;
+}
+
+.reveal .socket-info .dashboard-status {
+  top: 55px;
+}
+
+.reveal .socket-info .socket-status {
+  top: 25px;
+}
+
+/*********************************************
+ * CONTROLS: (from reveal.css)
+ *********************************************
+
+.reveal .controls {
+	display: none;
+	position: fixed;
+	width: 110px;
+	height: 110px;
+	z-index: 30;
+	right: 10px;
+	bottom: 10px;
+}
+
+.reveal .controls div {
+	position: absolute;
+	opacity: 0.1;
+	width: 20px; /* was 0 
+	height: 10px; /* was 0 
+	border: 12px solid transparent; /* was 12 
+
+	-webkit-transition: opacity 0.2s ease;
+	   -moz-transition: opacity 0.2s ease;
+	    -ms-transition: opacity 0.2s ease;
+	     -o-transition: opacity 0.2s ease;
+	        transition: opacity 0.2s ease;
+}
+
+.reveal .controls div.enabled {
+	opacity: 0.6;
+	cursor: pointer;
+}
+
+/* controls how far the arrow is depressed when clicked 
+.reveal .controls div.enabled:active {
+	margin-top: 1px;
+}
+
+
+
+.reveal .controls div.navigate-left {
+	top: 32px; /* was 42 
+
+	border-right-width: 32px; 
+	border-right-color: #eee;
+}
+
+.reveal .controls div.navigate-right {
+	left: 74px;
+	top: 42px;
+
+	border-left-width: 22px;
+	border-left-color: #eee;
+}
+
+
+.reveal .controls div.navigate-up {
+	left: 42px;
+
+	border-bottom-width: 22px;
+	border-bottom-color: #eee;
+}
+
+.reveal .controls div.navigate-down {
+	left: 42px;
+	top: 74px;
+
+	border-top-width: 22px;
+	border-top-color: #eee;
+}
+
+
+
+/*********************************************
+ * NAVIGATION CONTROLS (from theme.scss)
+ *********************************************
+
+.reveal .controls div.navigate-left,
+.reveal .controls div.navigate-left.enabled {
+	border-right-color: $linkColor;
+}
+
+.reveal .controls div.navigate-right,
+.reveal .controls div.navigate-right.enabled {
+	border-left-color: $linkColor;
+}
+
+.reveal .controls div.navigate-up,
+.reveal .controls div.navigate-up.enabled {
+	border-bottom-color: $linkColor;
+}
+
+.reveal .controls div.navigate-down,
+.reveal .controls div.navigate-down.enabled {
+	border-top-color: $linkColor;
+}
+
+.reveal .controls div.navigate-left.enabled:hover {
+	border-right-color: $linkColorHover;
+}
+
+.reveal .controls div.navigate-right.enabled:hover {
+	border-left-color: $linkColorHover;
+}
+
+.reveal .controls div.navigate-up.enabled:hover {
+	border-bottom-color: $linkColorHover;
+}
+
+.reveal .controls div.navigate-down.enabled:hover {
+	border-top-color: $linkColorHover;
+}
+*/
