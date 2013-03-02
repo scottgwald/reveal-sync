@@ -15,3 +15,6 @@ plugin for [hakimel/reveal.js](https://github.com/hakimel/reveal.js) for sync'd 
 3. Run the node.js application which is in the `node` directory either locally or in the cloud (e.g. on Heroku).
 4. In `js/reveal-sync.js`, change the `remoteServer` variable to match your server and port.
 
+# Todo
+
+* Explain dashboard.html

@@ -152,7 +152,7 @@ var commandArbiter = (function(){
 Socket Status Dot
 *****/
 
-var pathToStylesheet = "plugin/swgreen/css/swgreen.css";
+var pathToStylesheet = "plugin/reveal-sync/css/reveal-sync.css";
 
 // when do attribute names need to be quoted?? 
 // 
