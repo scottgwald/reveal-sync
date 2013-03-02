@@ -2,9 +2,11 @@
 <head>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-<script src="//localhost/socket.io/socket.io.js"></script>
+<!-- <script src="//localhost/socket.io/socket.io.js"></script> -->
+<script src="//remote-slideshow.herokuapp.com/socket.io/socket.io.js"></script>
 <script>
-  var remoteServer = 'localhost';
+  // var remoteServer = 'localhost';
+  var remoteServer = 'remote-slideshow.herokuapp.com';
   //var socket = io.connect(remoteServer, {client: 'dashboard'});
   // error not very verbose. Maybe it doesn't like the unknown option??
   var socket = io.connect(remoteServer, {port:80,'sync disconnect on unload':true});

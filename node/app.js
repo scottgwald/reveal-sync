@@ -4,7 +4,11 @@ var app = require('http').createServer(handler)
   , sharedVar = 10 
   , port = process.env.PORT || 80
   , dashboardsConnected = 0
-  , clientTypes = {};
+  , clientTypes = {}
+  , slideIndexH = 0
+  , slideIndexV = 0
+  , theLeader = undefined;
+
 
 // magical shit from heroku docs
 io.configure(function () { 
@@ -61,12 +65,39 @@ function broadcastClients(socket) {
     io.sockets.emit('clientEvent',data);
 }
 
-function serverLog(message) {
-  io.sockets.emit('serverLog',{'message':message});
+// leaderArbiter = (function () {
+//   var lastChanged = new Date();
+//   var theLeader = undefined;
+  
+//   function timeSinceLastChange() {
+//     return (new Date.getTime() - lastChanged.getTime());
+//   };
+
+//   function itHasBeenLongEnough
+//   function getLeader() {
+//     return theLeader;
+//   };
+//   function setLeader(leaderID) {
+//     theLeader = leaderID;
+//   };
+//   return {
+//     getLeader: getLeader,
+//     setLeader: setLeader
+//   }
+// })();
+
+// function serverLog(message) {
+//   io.sockets.emit('serverLog',{'message':message});
+// }
+
+// convention is to use 'message' attribute, but not enforcing here.
+function serverLog(data) {
+  io.sockets.emit('serverLog',data);
 }
 
 io.sockets.on('connection', function (socket) {
   io.sockets.emit('clientEvent',{dashboards:dashboardsConnected});
+  io.sockets.emit('syncEvent',{eventType:'slideChange',indexh:slideIndexH,indexv:slideIndexV});
   function updateAllSockets() {
     socket.emit('updateSharedVariable',sharedVar);
     socket.broadcast.emit('updateSharedVariable', sharedVar);
@@ -77,7 +108,8 @@ io.sockets.on('connection', function (socket) {
   //   clientTypeGet = name;
   // });
   
-  socket.on('serverLog', function(data) {serverLog(data.message)});
+  socket.on('serverLog', function(data) {serverLog(data)});
+  // socket.on('serverLog', function(data) {serverLog(data.message)});
   
   // TODO: get rid of up and down, they're subsumed by 'keypress'
   socket.on('upArrow', function() {io.sockets.emit('previous slide')});
@@ -86,6 +118,19 @@ io.sockets.on('connection', function (socket) {
   // whenever a keypress event comes it, broadcast it along with its data    
   socket.on('keypress', function(data) {io.sockets.emit('keypress',data);});
   // socket.on('keypress', function(data) {socket.emit('keypress',data); socket.broadcast.emit('keypress',data)});
+
+  // still can get stuck in loops ...  
+  socket.on('syncEvent', function(data) {
+    serverLog("Server got syncEvent.");
+    switch(data.eventType) {
+      case 'slideChange':
+        slideIndexH = data.indexh;
+        slideIndexV = data.indexv;
+        socket.broadcast.emit('syncEvent',data);
+        //io.sockets.emit('syncEvent',data);
+        break;
+    };
+  });
 
   socket.on('clientEvent', function(data) {
 
