@@ -1,4 +1,4 @@
-window.console.log("hello from swgreen.js"); // works, appears to require 'window'
+window.console.log("hello from reveal-sync.js"); // works, appears to require 'window'
 // check that dependency has been loaded
 
 var options = {
@@ -10,9 +10,9 @@ REMOTE CONTROL
 *****/
 
 console.log(io);
-var remoteServer = 'localhost';
+var remoteServer = {url:'localhost',port:80};
 
-var socket = io.connect(remoteServer, {port:80});
+var socket = io.connect(remoteServer.url, {port:remoteServer.port});
     socket.on('next slide', function () {
         console.log("Got 'next slide' from socket.");
         Reveal.next();
