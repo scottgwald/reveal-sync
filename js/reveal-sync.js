@@ -10,7 +10,8 @@ REMOTE CONTROL
 *****/
 
 console.log(io);
-var remoteServer = {url:'localhost',port:80};
+// var remoteServer = {url:'remote-slideshow.herokuapp.com',port:''};
+var remoteServer = {url:'localhost',port:''};
 
 var socket = io.connect(remoteServer.url, {port:remoteServer.port});
     socket.on('next slide', function () {
@@ -41,7 +42,16 @@ var socket = io.connect(remoteServer.url, {port:remoteServer.port});
     	}
     });
 
-    socket.on('serverLog', function(data) {console.log("serverLog: "+data.message)});
+    socket.on('serverLog', function(data) {
+        var theMessage = '';
+        if (data.message === undefined) {
+            console.log("Using JSON.stringify on serverLog data.");
+            theMessage = JSON.stringify(data);
+        } else {
+            theMessage = data.message;
+        }
+        console.log("serverLog: "+theMessage);
+    });
 
     if (options.statusDots) {
         socket.on('connect', function() {$('.reveal .socket-status')[0].classList.add('enabled');});
@@ -198,4 +208,15 @@ Reveal.slide = function(h,v,f,options) {
     oldSlide(h,v,f);
 }
 
+/*****
+size my image
+*****/
 
+
+// $('.reveal .fullsize').each(function(index){
+//     this.classList.add('fillheight');
+// });
+
+// $('#myprecious').style({padding:'0px 0px', margin:'0px 0px','max-width':"100%",'max-height':"100%"})
+//                 .width("100%")
+//                 .height("100%");

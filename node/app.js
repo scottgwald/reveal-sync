@@ -121,7 +121,10 @@ io.sockets.on('connection', function (socket) {
 
   // still can get stuck in loops ...  
   socket.on('syncEvent', function(data) {
-    serverLog("Server got syncEvent.");
+
+    // want to check if I should be listening
+    
+    serverLog({message:"Server got syncEvent."});
     switch(data.eventType) {
       case 'slideChange':
         slideIndexH = data.indexh;
@@ -133,6 +136,8 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('clientEvent', function(data) {
+
+    // want to check if I should be listening.
 
     // 1. check clientType in order to adjust dashboardsConnected
 
