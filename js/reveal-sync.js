@@ -14,48 +14,50 @@ console.log(io);
 var remoteServer = {url:'localhost',port:''};
 
 var socket = io.connect(remoteServer.url, {port:remoteServer.port});
-    socket.on('next slide', function () {
-        console.log("Got 'next slide' from socket.");
-        Reveal.next();
-    });
+socket.on('next slide', function () {
+    console.log("Got 'next slide' from socket.");
+    Reveal.next();
+});
 
-    socket.on('previous slide', function () {
-        console.log("Got 'previous slide' from socket.");
-        Reveal.prev();
-    });
+socket.on('previous slide', function () {
+    console.log("Got 'previous slide' from socket.");
+    Reveal.prev();
+});
 
-    socket.on('keypress', function(data) {
-    	console.log("Got keypress with keycode "+data.keycode);
-    	var keymapping = {
-    		'39': function () {Reveal.next();},
-    		'37': function () {Reveal.prev();},
-    		'66': function () {Reveal.togglePause();},
-    		'80': function () {Reveal.togglePause();}
-    	};
-    	// how do I do error-catching when the code doesn't exist?
-    	try {
-    		keymapping[data.keycode]();
-    		console.log("key was mapped: "+data.keycode);    		
-    	}
-    	catch(e) {
-    		console.log("key not mapped: "+data.keycode);
-    	}
-    });
+socket.on('keypress', function(data) {
+    console.log("Got keypress with keycode "+data.keycode);
+    var keymapping = {
+        /* ra */ '39': function () {Reveal.next();}, /* right arrow */
+        /* la */ '37': function () {Reveal.prev();}, /* left arrow */
+        /* b  */ '66': function () {Reveal.togglePause();},
+        /* p  */ '80': function () {Reveal.togglePause();},
+        /* t  */ '84': function () {console.log("appendtextslide"); appendTextSlide('Some rad text.');},
+        /* r  */ '82': function () {reload();}
+    };
+	// how do I do error-catching when the code doesn't exist?
+	try {
+		keymapping[data.keycode]();
+		console.log("key was mapped: "+data.keycode);    		
+	}
+	catch(e) {
+		console.log("key not mapped: "+data.keycode);
+	}
+});
 
-    socket.on('serverLog', function(data) {
-        var theMessage = '';
-        if (data.message === undefined) {
-            console.log("Using JSON.stringify on serverLog data.");
-            theMessage = JSON.stringify(data);
-        } else {
-            theMessage = data.message;
-        }
-        console.log("serverLog: "+theMessage);
-    });
+socket.on('serverLog', function(data) {
+    var theMessage = '';
+    if (data.message === undefined) {
+        console.log("Using JSON.stringify on serverLog data.");
+        theMessage = JSON.stringify(data);
+    } else {
+        theMessage = data.message;
+    }
+    console.log("serverLog: "+theMessage);
+});
 
-    if (options.statusDots) {
-        socket.on('connect', function() {$('.reveal .socket-status')[0].classList.add('enabled');});
-        socket.on('disconnect', function() {$('.reveal .socket-status')[0].classList.remove('enabled');});
+if (options.statusDots) {
+    socket.on('connect', function() {$('.reveal .socket-status')[0].classList.add('enabled');});
+    socket.on('disconnect', function() {$('.reveal .socket-status')[0].classList.remove('enabled');});
         // need try/catch here
         socket.on('clientEvent', function(data) {
             console.log("Got clientEvent. Number of dashboards connected: "+data.dashboards+".");
@@ -66,33 +68,46 @@ var socket = io.connect(remoteServer.url, {port:remoteServer.port});
                 $('.reveal .dashboard-status')[0].classList.remove('enabled');
             };
         });
-    };
+};
 
-    // this gets stuck in loops... need to somehow prevent a single
-    //   request from bouncing back and forth.    
-    socket.on('syncEvent',function(data){
-        // register
-        switch(data.eventType) {
-            case 'slideChange':
-                var currentIndices = Reveal.getIndices();
-                // TODO can leave this in there for now, but it shouldn't be necessary
-                // if (currentIndices.h === data.indexh && currentIndices.v === data.indexv) {
-                //     console.log("Incoming event matches current indices. Ignoring.");
-                //     break;
-                // } else {
+// this gets stuck in loops... need to somehow prevent a single
+//   request from bouncing back and forth.    
+socket.on('syncEvent',function(data){
+    // register
+    switch(data.eventType) {
+        case 'slideChange':
+        var currentIndices = Reveal.getIndices();
+            // TODO can leave this in there for now, but it shouldn't be necessary
+            // if (currentIndices.h === data.indexh && currentIndices.v === data.indexv) {
+            //     console.log("Incoming event matches current indices. Ignoring.");
+            //     break;
+            // } else {
                 var aSlideSpec = new SlideSpec(data.indexh,data.indexv,data.indexf);
                 commandArbiter.register(aSlideSpec);
                 Reveal.slide(data.indexh, data.indexv);
                 break;
-                // };
+            // };
         };
-    });
+});
 
 function SlideSpec(h,v,f) {
     this.h = h; this.v = v; this.f = f;
 }
 
 SlideSpec.prototype.toString = function() {return JSON.stringify(this)};
+
+function reload() {
+    console.log("function reload, reveal-sync.js");
+    document.location.reload();
+}
+
+function appendTextSlide(theText) {
+    console.log("about to try appending a slide.");
+    $('<section>', {'class':'slide-I-added'})
+        .append($('<h1>',{'text':theText}))
+        .appendTo($('.reveal .slides'));
+    console.log("Number of horizontal slides: "+$('.reveal .slides').children().length);
+}
 
 var commandArbiter = (function(){
     var commandRegister = {};
@@ -106,13 +121,14 @@ var commandArbiter = (function(){
                 commandRegister[aSlideSpec] = [];
             }
             if (!(commandRegister[aSlideSpec] instanceof Array)) {
-                // TODO throw error
+            // TODO throw error
             }
         } else {
-            console.log("Improperly formed SlideSpec "+aSlideSpec);
-        // TODO else throw error
+        console.log("Improperly formed SlideSpec "+aSlideSpec);
+    // TODO else throw error
         }
     }
+
 
     function staleEntries() {
         var out = "";
@@ -174,9 +190,9 @@ if (options.statusDots) {
     // add element to the DOM
     // (should I access the options object to check if status dot is enabled?)
     $('<aside>', {'class':'socket-info', 'style': 'display: block;'})
-        .append($('<div>', {'class':'socket-status'}))
-        .append($('<div>', {'class':'dashboard-status'}))
-        .appendTo($('.reveal'));
+    .append($('<div>', {'class':'socket-status'}))
+    .append($('<div>', {'class':'dashboard-status'}))
+    .appendTo($('.reveal'));
 };
 
 /*****
@@ -209,7 +225,7 @@ Reveal.slide = function(h,v,f,options) {
 }
 
 /*****
-size my image
+* size my image
 *****/
 
 
@@ -220,3 +236,40 @@ size my image
 // $('#myprecious').style({padding:'0px 0px', margin:'0px 0px','max-width':"100%",'max-height':"100%"})
 //                 .width("100%")
 //                 .height("100%");
+
+/************************************************
+* Debug logging
+*/
+
+var logger = function() {
+    var oldConsoleLog = null;
+    var pub = {};
+
+    pub.enableLogger =  function enableLogger() {
+        if(oldConsoleLog == null)
+            return;
+
+        window['console']['log'] = oldConsoleLog;
+    };
+
+    pub.disableLogger = function disableLogger() {
+        oldConsoleLog = console.log;
+        window['console']['log'] = function() {};
+    };
+
+    return pub;
+}();
+
+// $(document).ready(
+//     function() {
+//         console.log('hello');
+
+//         logger.disableLogger();
+//         console.log('hi', 'hiya');
+//         console.log('this wont show up in console');
+
+//         logger.enableLogger();
+//         console.log('This will show up!');
+// });
+
+
